@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="_ds/nocturne-bc4706f6-c94a-47b7-99c0-2729fa95ad54/styles.css">
+  <script src="_ds/nocturne-bc4706f6-c94a-47b7-99c0-2729fa95ad54/_ds_bundle.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+  <style>
+    body { margin: 0; background: #e9e9eb; }
+    a { color: #FF8A00; } a:hover { color: #e05e00; }
+  </style>
+</helmet>
+<div style="min-height:100vh;background:#e9e9eb;display:flex;justify-content:center">
+  <div data-screen-label="등대 앱" style="width:100%;max-width:480px;background:#f4f4f5;min-height:100vh;position:relative;box-shadow:0 0 40px rgba(0,0,0,.12);font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif">
+    <div style="display:flex;align-items:center;gap:10px;padding:14px 14px 10px;background:#f4f4f5;position:sticky;top:0;z-index:10">
+      <img src="uploads/img_app-icon_deungdae.png" alt="등대" style="width:30px;height:30px;border-radius:8px;flex:none;cursor:pointer" onClick="{{ appGoFeed }}">
+      <div style="flex:1;display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #FFC83D;border-radius:999px;padding:8px 14px;color:#96969d;font-size:13px"><i class="ph ph-magnifying-glass" style="font-size:15px;color:#FF8A00"></i>검색</div>
+      <button onClick="{{ appGoDm }}" aria-label="DM" style="background:none;border:none;padding:2px;cursor:pointer;display:flex"><i class="ph ph-chat-circle-dots" style="font-size:22px;color:{{ dmIconColor }}"></i></button>
+      <button onClick="{{ appGoProfile }}" aria-label="내 프로필" style="background:none;border:none;padding:2px;cursor:pointer;display:flex"><i class="ph ph-user-circle" style="font-size:24px;color:{{ profileIconColor }}"></i></button>
+    </div>
+    <sc-if value="{{ appFeed }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:12px;padding:12px 14px 24px">
+      <sc-for list="{{ deungdaeItems }}" as="it" hint-placeholder-count="8">
+        <div onClick="{{ it.open }}" style="display:flex;gap:12px;background:{{ it.cardBg }};border-radius:14px;padding:10px;border:1.5px solid {{ it.borderColor }};cursor:pointer">
+          <div style="position:relative;width:104px;height:104px;flex:none;border-radius:11px;overflow:hidden;background:#ececee">
+            <img src="{{ it.thumb }}" alt="{{ it.title }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block">
+          </div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;justify-content:center">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <sc-if value="{{ it.badge }}" hint-placeholder-val="{{ false }}">
+                <span style="flex:none;font-size:9.5px;font-weight:800;letter-spacing:.06em;color:#fff;background:{{ it.badgeBg }};border-radius:999px;padding:2.5px 8px">{{ it.badge }}</span>
+              </sc-if>
+              <span style="font-size:13.5px;font-weight:600;color:#2f2f34;line-height:1.35">{{ it.title }}</span>
+            </div>
+            <div style="font-size:14.5px;font-weight:800;color:#2f2f34">{{ it.price }}</div>
+            <div style="font-size:11px;color:#737379;display:flex;align-items:center;gap:4px"><i class="ph ph-map-pin" style="font-size:12px;color:#FF8A00"></i>{{ it.region }}</div>
+            <div style="font-size:11.5px;font-weight:600;color:{{ it.dueColor }};display:flex;align-items:center;gap:4px"><i class="ph ph-calendar-blank" style="font-size:13px"></i>{{ it.due }}</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:11px;color:#737379">
+              <span style="display:flex;align-items:center;gap:3px"><i class="ph ph-heart" style="font-size:12px;color:#FF8A00"></i>{{ it.likes }}</span>
+              <span style="display:flex;align-items:center;gap:3px"><i class="ph ph-chat-circle" style="font-size:12px;color:#FF8A00"></i>{{ it.dm }}</span>
+              <span style="display:flex;align-items:center;gap:3px;color:#96969d"><i class="ph ph-user" style="font-size:12px"></i>{{ it.nick }}</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+      <button onClick="{{ openWrite }}" aria-label="새 글 쓰기" style="position:sticky;bottom:18px;align-self:flex-end;width:52px;height:52px;border-radius:50%;border:none;background:#FF8A00;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 14px rgba(255,138,0,.45)"><i class="ph ph-plus" style="font-size:24px"></i></button>
+    </div>
+    <sc-if value="{{ writeOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeWrite }}" style="position:absolute;inset:0;background:rgba(20,20,24,.55);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:120px 24px 24px">
+        <div onClick="{{ stop }}" style="background:#fff;border-radius:16px;padding:22px 20px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:14px;text-align:center">
+          <i class="ph ph-lock-key" style="font-size:34px;color:#FF8A00;align-self:center"></i>
+          <div style="font-size:13.5px;line-height:1.6;color:#2f2f34;font-weight:600">판매글 작성은 인증된 회원부터 가능합니다.</div>
+          <div style="display:flex;gap:8px">
+            <button onClick="{{ closeWrite }}" style="flex:1;background:#FF8A00;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit">확인</button>
+            <button onClick="{{ closeWrite }}" style="flex:1;background:#f4f4f5;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:600;color:#4b4b52;cursor:pointer;font-family:inherit">뒤로</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    </sc-if>
+    <sc-if value="{{ appDetail }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:10px 14px 26px;display:flex;flex-direction:column;gap:12px">
+      <button onClick="{{ appGoFeed }}" style="background:none;border:none;color:#FF8A00;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:5px;padding:0;cursor:pointer;font-family:inherit"><i class="ph ph-caret-left" style="font-size:14px"></i>목록으로</button>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <img src="{{ detailMain }}" alt="{{ detailTitle }}" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;display:block">
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <sc-for list="{{ detailPhotos }}" as="p" hint-placeholder-count="5">
+            <img src="{{ p.src }}" alt="상세 사진" onClick="{{ p.pick }}" style="width:52px;height:52px;object-fit:cover;border-radius:9px;cursor:pointer;border:2px solid {{ p.border }};display:block">
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:17px;font-weight:700;color:#2f2f34;line-height:1.35">{{ detailTitle }}</div>
+        <div style="font-size:19px;font-weight:800;color:#2f2f34">{{ detailPrice }}</div>
+        <div><span style="display:inline-block;font-size:11px;font-weight:600;color:#FF8A00;background:#fff;border:1px solid #FFC83D;border-radius:999px;padding:3px 10px">{{ detailCategory }}</span></div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:11.5px;color:#737379;flex-wrap:wrap;margin-top:2px">
+          <span style="display:flex;align-items:center;gap:3px"><i class="ph ph-user" style="font-size:13px;color:#FF8A00"></i>{{ detailNick }}</span>
+          <span style="display:flex;align-items:center;gap:3px"><i class="ph ph-map-pin" style="font-size:13px;color:#FF8A00"></i>{{ detailRegion }}</span>
+          <span style="display:flex;align-items:center;gap:3px"><i class="ph ph-calendar-blank" style="font-size:13px;color:#FF8A00"></i>{{ detailDue }}</span>
+          <span style="display:flex;align-items:center;gap:3px"><i class="ph ph-heart" style="font-size:13px;color:#FF8A00"></i>{{ detailLikes }}</span>
+          <span style="display:flex;align-items:center;gap:3px"><i class="ph ph-chat-circle" style="font-size:13px;color:#FF8A00"></i>{{ detailDm }}</span>
+        </div>
+      </div>
+      <div style="background:#fff;border-radius:13px;padding:14px;font-size:13px;line-height:1.65;color:#4b4b52;white-space:pre-line">{{ detailDesc }}</div>
+      <div style="display:flex;gap:8px">
+        <button onClick="{{ toggleLike }}" aria-label="좋아요" style="flex:none;width:48px;border-radius:12px;border:1.5px solid #FF8A00;background:{{ likeBg }};color:{{ likeColor }};display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><i class="ph ph-heart" style="font-size:19px"></i></button>
+        <button onClick="{{ dmStart }}" style="flex:1;background:#FF8A00;border:none;color:#fff;font-size:14px;font-weight:700;border-radius:12px;padding:13px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px"><i class="ph ph-chat-circle-dots" style="font-size:17px"></i>DM 보내기</button>
+      </div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ appChat }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:10px 14px 20px;display:flex;flex-direction:column;gap:10px">
+      <button onClick="{{ appGoDm }}" style="background:none;border:none;color:#FF8A00;font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:5px;padding:0;cursor:pointer;font-family:inherit;align-self:flex-start"><i class="ph ph-caret-left" style="font-size:14px"></i>DM 목록</button>
+      <div onClick="{{ chatGoItem }}" style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:10px 12px;cursor:pointer" style-hover="background:#fdf3e7">
+        <i class="{{ chatIcon }}" style="font-size:24px;color:#FFC83D;flex:none"></i>
+        <div style="min-width:0">
+          <div style="font-size:13px;font-weight:700;color:#2f2f34">{{ chatNick }}</div>
+          <div style="font-size:10.5px;color:#96969d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ chatItem }}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px;padding:4px 0 2px">
+        <sc-for list="{{ chatMsgs }}" as="m" hint-placeholder-count="6">
+          <div style="display:flex;justify-content:{{ m.justify }}">
+            <div style="max-width:78%;padding:8px 12px;border-radius:13px;font-size:12.5px;line-height:1.55;background:{{ m.bg }};color:{{ m.color }}">{{ m.text }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ chatFileName }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:6px;align-self:flex-start;background:#fff;border:1px solid #FFC83D;border-radius:999px;padding:5px 10px;font-size:11px;color:#4b4b52">
+          <i class="ph ph-paperclip" style="font-size:13px;color:#FF8A00"></i>{{ chatFileName }}
+          <button onClick="{{ chatFileClear }}" style="background:none;border:none;padding:0;cursor:pointer;display:flex"><i class="ph ph-x" style="font-size:12px;color:#96969d"></i></button>
+        </div>
+      </sc-if>
+      <div style="display:flex;gap:7px;align-items:center;background:#fff;border-radius:999px;padding:7px 8px 7px 8px">
+        <label style="flex:none;width:28px;height:28px;border-radius:50%;background:#f4f4f5;display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ph ph-plus" style="font-size:15px;color:#FF8A00"></i><input type="file" onChange="{{ chatOnFile }}" style="display:none"></label>
+        <input ref="{{ chatInputRef }}" onInput="{{ chatOnInput }}" onKeyDown="{{ stopKeys }}" onKeyUp="{{ stopKeys }}" placeholder="메시지 입력" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-size:12.5px;color:#2f2f34;font-family:inherit;padding-left:5px">
+        <button onClick="{{ chatSend }}" aria-label="보내기" style="flex:none;width:28px;height:28px;border-radius:50%;border:none;background:{{ chatSendBg }};display:flex;align-items:center;justify-content:center;cursor:{{ chatSendCursor }};padding:0"><i class="ph ph-paper-plane-right" style="font-size:14px;color:#fff"></i></button>
+      </div>
+    </div>
+    </sc-if>
+    <sc-if value="{{ appProfile }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:16px 14px 24px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:14px">
+        <i class="ph ph-user-circle" style="font-size:44px;color:#FFC83D"></i>
+        <div style="flex:1">
+          <div style="font-size:15.5px;font-weight:700;color:#2f2f34">{{ appNick }}</div>
+          <div style="font-size:11px;color:#96969d">등대 회원</div>
+        </div>
+        <button onClick="{{ openNickModal }}" style="background:none;border:1.5px solid #FFC83D;color:#FF8A00;border-radius:999px;padding:6px 12px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit">닉네임 수정</button>
+      </div>
+      <div style="background:#fff;border-radius:14px;overflow:hidden">
+        <div onClick="{{ toggleWish }}" style="display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid #f4f4f5;font-size:13.5px;font-weight:600;color:#2f2f34;cursor:pointer"><i class="ph ph-heart" style="font-size:18px;color:#FF8A00"></i>관심 목록<span style="margin-left:auto;font-size:11.5px;color:#96969d;font-weight:400">좋아요 누른 게시물 2</span><i class="{{ wishCaret }}" style="font-size:13px;color:#FFC83D"></i></div>
+        <sc-if value="{{ wishOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="border-bottom:1px solid #f4f4f5;background:#fafafa">
+            <sc-for list="{{ wishItems }}" as="w" hint-placeholder-count="2">
+              <div onClick="{{ w.open }}" style="display:flex;align-items:center;gap:9px;padding:11px 14px 11px 42px;font-size:12.5px;color:#4b4b52;cursor:pointer" style-hover="color:#FF8A00">
+                <i class="ph ph-heart-straight-fill" style="font-size:12px;color:#FF8A00;flex:none"></i>
+                <span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ w.title }}</span>
+                <span style="font-size:11px;color:#96969d;flex:none">{{ w.price }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <div style="display:flex;align-items:center;gap:10px;padding:14px;border-bottom:1px solid #f4f4f5;font-size:13.5px;font-weight:600;color:#2f2f34;cursor:pointer"><i class="ph ph-note-pencil" style="font-size:18px;color:#FF8A00"></i>내가 올린 글<span style="margin-left:auto;font-size:11.5px;color:#96969d;font-weight:400">0</span><i class="ph ph-caret-right" style="font-size:13px;color:#FFC83D"></i></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:14px;font-size:13.5px;font-weight:600;color:#2f2f34"><i class="ph ph-bell" style="font-size:18px;color:#FF8A00"></i>알림 설정
+          <button onClick="{{ toggleNotif }}" aria-label="알림 설정" style="margin-left:auto;width:44px;height:24px;border-radius:999px;border:none;cursor:pointer;position:relative;background:{{ notifBg }};transition:background .2s">
+            <span style="position:absolute;top:3px;left:{{ notifKnobLeft }};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)"></span>
+          </button>
+        </div>
+      </div>
+      <button onClick="{{ openWithdraw }}" style="background:none;border:none;color:#96969d;font-size:12px;text-decoration:underline;cursor:pointer;margin-top:14px;align-self:center;font-family:inherit">회원 탈퇴하기</button>
+    </div>
+    <sc-if value="{{ nickModalOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeNickModal }}" style="position:absolute;inset:0;background:rgba(20,20,24,.55);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:80px 24px 24px">
+        <div onClick="{{ stop }}" style="background:#fff;border-radius:16px;padding:20px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:14px">
+          <div style="font-size:15px;font-weight:700;color:#2f2f34">닉네임 수정</div>
+          <div style="display:flex;gap:7px">
+            <input ref="{{ nickInputRef }}" defaultValue="{{ nickDraft }}" onKeyDown="{{ stopKeys }}" onKeyUp="{{ stopKeys }}" placeholder="새 닉네임 입력" style="flex:1;min-width:0;border:1.5px solid #FFC83D;border-radius:10px;padding:10px 12px;font-size:13.5px;color:#2f2f34;outline:none;font-family:inherit;box-sizing:border-box">
+            <button onClick="{{ randomNick }}" title="랜덤 생성" style="flex:none;background:#f4f4f5;border:none;border-radius:10px;padding:0 12px;font-size:16px;color:#FF8A00;cursor:pointer;display:flex;align-items:center"><i class="ph ph-shuffle"></i></button>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button onClick="{{ closeNickModal }}" style="flex:1;background:#f4f4f5;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:600;color:#4b4b52;cursor:pointer;font-family:inherit">닫기</button>
+            <button onClick="{{ confirmNick }}" style="flex:1;background:#FF8A00;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit">확인</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ withdrawOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeWithdraw }}" style="position:absolute;inset:0;background:rgba(20,20,24,.55);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:80px 24px 24px">
+        <div onClick="{{ stop }}" style="background:#fff;border-radius:16px;padding:22px 20px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:14px;text-align:center">
+          <i class="ph ph-warning-circle" style="font-size:34px;color:#FF8A00;align-self:center"></i>
+          <div style="font-size:13.5px;line-height:1.6;color:#2f2f34;font-weight:600">탈퇴 후 재가입이 불가합니다.<br>정말 탈퇴하시겠습니까?</div>
+          <div style="display:flex;gap:8px">
+            <button onClick="{{ closeWithdraw }}" style="flex:1;background:#f4f4f5;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:600;color:#4b4b52;cursor:pointer;font-family:inherit">취소</button>
+            <button onClick="{{ closeWithdraw }}" style="flex:1;background:#FF8A00;border:none;border-radius:10px;padding:10px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit">탈퇴하기</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    </sc-if>
+    <sc-if value="{{ appDm }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:12px 14px 24px;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:14px;font-weight:700;color:#2f2f34;padding:2px 2px 4px">DM</div>
+      <sc-for list="{{ deungdaeDms }}" as="d" hint-placeholder-count="5">
+        <div onClick="{{ d.open }}" style="display:flex;align-items:center;gap:11px;background:#fff;border-radius:13px;padding:11px 12px;cursor:pointer">
+          <i class="{{ d.icon }}" style="font-size:26px;color:#FFC83D;flex:none"></i>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:baseline;gap:6px">
+              <span style="font-size:12.5px;font-weight:700;color:#2f2f34">{{ d.nick }}</span>
+              <span style="font-size:10px;color:#a8a8af">{{ d.item }}</span>
+            </div>
+            <div style="font-size:11.5px;color:#737379;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ d.last }}</div>
+          </div>
+          <span style="font-size:10px;color:#a8a8af;flex:none">{{ d.time }}</span>
+        </div>
+      </sc-for>
+    </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  state = { appView: 'feed' };
+  rawItems() {
+    return [
+      ['[아이패드/중고] 상태 좋아요', '상시', '서울 혜화역 부근', 18, 7, '느긋한 수달', 4, '119만원', 'BEST'],
+      ['헬스장 3회 양도', '3일 남음', '서울 서초구', 12, 5, '활발한 사자', 1, '20만원'],
+      ['서초] 텀블러 직거래 희망', '상시', '서울 교대역 부근', 4, 2, '냉소적인 까치', 2, '6천원'],
+      ['에어팟 미개봉 새상품', '5일 남음', '하남 감일동', 31, 9, '조용한 돌고래', 3, '15만 9천원', 'NEW'],
+      ['캠핑 랜턴 2회 사용', '7일 남음', '인천 만석동', 7, 3, '신중한 부엉이', 5, '5만원'],
+      ['원목 협탁 나눔', '상시', '서울 마포구', 26, 11, '다정한 고슴도치', 6, '무료'],
+      ['필름 카메라 작동 확인', '2일 남음', '서울 서초구', 15, 6, '냉소적인 까치', 7, '12만원'],
+      ['커피 머신 풀박스', '상시', '서울 교대역 부근', 9, 4, '활발한 사자', 8, '3만원']
+    ];
+  }
+  itemMeta() {
+    return {
+      '[아이패드/중고] 상태 좋아요': { cat: '디지털 기기', photos: [1,2,3,4,5].map(n => 'uploads/img_ipad' + n + '.png'), desc: '구매한 매장가서 배터리 포함 전체 진단 받아보았고, 배터리 성능 100%에 풀사이클(16)이라고 합니다. 다른 기능들도 매우매우 양호한 상황이라고 확인 받았습니다. 박스와 사용설명서도 그대로 전달드릴 예정입니다. 기스,흠집,얼룩 전혀 없어서 사진에서 보시듯 액정은 거의 거울이고 기기 뒷면 또한 커버 벗겨도 흠집난 곳 전혀 없습니다.' },
+      '헬스장 3회 양도': { cat: '티켓/이용권', photos: ['uploads/img_gym.png'], desc: '개인 사정으로 못 가게 되어 일반 이용권 3회분 양도합니다. 프런트에서 이름 변경만 하면 되어 절차 간단합니다. 유효기간 충분히 남아 있습니다.' },
+      '서초] 텀블러 직거래 희망': { cat: '생활/주방', photos: [1,2,3,4,5,6,7,8,9].map(n => 'uploads/tumbler_angle_0' + n + '.png'), desc: '선물 받고 한 번도 사용하지 않은 스테인리스 텀블러입니다. 각인 없고 구성품 전부 있습니다. 교대역 부근 직거래 희망합니다.' },
+      '에어팟 미개봉 새상품': { cat: '디지털 기기', photos: [1,2,3].map(n => 'uploads/img_airpod' + n + '.png'), desc: '미개봉 새상품입니다. 정품 등록되어 있지 않고 영수증 지참 가능합니다. 단순 변심으로 판매합니다.' },
+      '캠핑 랜턴 2회 사용': { cat: '스포츠/레저', photos: ['uploads/img_lanton1.png', 'uploads/img_lanton2.png'], desc: '두 번 사용한 캠핑 랜턴입니다. 생활 기스 없고 밝기·배터리 사용시간 모두 정상입니다. 박스 포함해서 드립니다.' },
+      '원목 협탁 나눔': { cat: '가구/인테리어', photos: [1,2,3,4,5,6,7,8,9].map(n => 'uploads/wood_nightstand_scene_0' + n + '.png'), desc: '이사하게 되어 나눔합니다. 상판에 옅은 자국 하나 있는 것 외에 상태 좋습니다. 직접 가져가실 수 있는 분만 연락 주세요.' },
+      '필름 카메라 작동 확인': { cat: '취미/수집', photos: ['uploads/img_camera1.png', 'uploads/img_camera2.png'], desc: '작동 확인 완료했습니다. 셔터, 필름 이송 모두 정상이고 테스트 롤 결과물 보여드릴 수 있습니다. 스트랩 포함.' },
+      '커피 머신 풀박스': { cat: '생활/가전', photos: [1,2,3,4,5,6,7,8,9].map(n => 'uploads/coffee_machine_0' + n + '.png'), desc: '풀박스 구성 그대로 있습니다. 내부 세척 완료했고 캡슐 몇 개 함께 드립니다. 잘 쓰다가 업그레이드하면서 판매합니다.' }
+    };
+  }
+  openItemByTitle(title) {
+    const r = this.rawItems().find(x => x[0] === title);
+    if (!r) return;
+    const [t, due, region, likes, dm, nick, slotN, price] = r;
+    this.setState({ appView: 'detail', detailItem: { title: t, due, region, likes, dm, nick, price }, detailPhoto: 0 });
+  }
+  startDm(it) {
+    const existing = (this._dmList || []).find(x => x.item === it.title);
+    if (existing) { this.setState({ appView: 'chat', chatDm: existing }); return; }
+    const icons = { '다정한 고슴도치': 'ph ph-leaf', '냉소적인 까치': 'ph ph-bird', '활발한 사자': 'ph ph-cat', '조용한 돌고래': 'ph ph-fish', '느긋한 수달': 'ph ph-paw-print', '신중한 부엉이': 'ph ph-moon' };
+    const d = { nick: it.nick, item: it.title, last: '안녕하세요! 문의 주셔서 감사합니다 :)', time: '방금', icon: icons[it.nick] || 'ph ph-storefront', msgs: [['them', '안녕하세요! 문의 주셔서 감사합니다 :) 편하게 질문 주세요.']] };
+    this.setState(s => ({ customDms: [d, ...(s.customDms || [])], appView: 'chat', chatDm: d }));
+  }
+  detailVals(st) {
+    const it = st.detailItem;
+    if (st.appView !== 'detail' || !it) return { appDetail: false, detailPhotos: [], detailMain: '', detailTitle: '', detailPrice: '', detailCategory: '', detailDesc: '', detailNick: '', detailRegion: '', detailDue: '', detailLikes: '', detailDm: '', dmStart: () => {}, toggleLike: () => {}, likeBg: '#fff', likeColor: '#FF8A00' };
+    const m = this.itemMeta()[it.title] || { cat: '기타', desc: '', photos: [] };
+    const photos = m.photos || [];
+    const cur = Math.min(st.detailPhoto || 0, photos.length - 1);
+    return {
+      appDetail: true,
+      detailMain: photos[cur] || '',
+      detailPhotos: photos.map((src, n) => ({ src, border: n === cur ? '#FF8A00' : 'transparent', pick: () => this.setState({ detailPhoto: n }) })),
+      detailTitle: it.title, detailPrice: it.price, detailCategory: m.cat, detailDesc: m.desc,
+      detailNick: it.nick, detailRegion: it.region, detailDue: it.due,
+      detailLikes: it.likes + (((st.liked || {})[it.title]) ? 1 : 0), detailDm: it.dm,
+      toggleLike: () => this.setState(s => { const l = { ...(s.liked || {}) }; l[it.title] = !l[it.title]; return { liked: l }; }),
+      likeBg: ((st.liked || {})[it.title]) ? '#FF8A00' : '#fff',
+      likeColor: ((st.liked || {})[it.title]) ? '#ffffff' : '#FF8A00',
+      dmStart: () => this.startDm(it)
+    };
+  }
+  renderVals() {
+    const st = this.state;
+    return {
+      stop: (ev) => ev.stopPropagation(),
+      stopKeys: (e) => e.stopPropagation(),
+      appFeed: (st.appView || 'feed') === 'feed',
+      appProfile: st.appView === 'profile',
+      appDm: st.appView === 'dm',
+      appChat: st.appView === 'chat',
+      appGoFeed: () => this.setState({ appView: 'feed' }),
+      appGoProfile: () => this.setState({ appView: 'profile' }),
+      appGoDm: () => this.setState({ appView: 'dm' }),
+      writeOpen: !!st.writeOpen,
+      openWrite: () => this.setState({ writeOpen: true }),
+      closeWrite: () => this.setState({ writeOpen: false }),
+      dmIconColor: st.appView === 'dm' ? '#e05e00' : '#FF8A00',
+      profileIconColor: st.appView === 'profile' ? '#e05e00' : '#FF8A00',
+      appNick: st.appNick || '정의로운 시민',
+      openNickModal: () => this.setState(s => ({ nickModalOpen: true, nickDraft: s.appNick || '정의로운 시민' })),
+      closeNickModal: () => this.setState({ nickModalOpen: false }),
+      nickModalOpen: !!st.nickModalOpen,
+      nickDraft: st.nickDraft ?? '',
+      nickInputRef: (this._nickRef = this._nickRef || React.createRef()),
+      randomNick: () => {
+        const A = ['정의로운', '용감한', '신중한', '명랑한', '냉철한', '엉뚱한', '고요한', '부지런한', '재빠른', '따뜻한'];
+        const B = ['시민', '호랑이', '고래', '참새', '여우', '너구리', '펭귄', '두더지', '수리부엉이', '살쾡이'];
+        const v = A[Math.floor(Math.random() * A.length)] + ' ' + B[Math.floor(Math.random() * B.length)];
+        if (this._nickRef && this._nickRef.current) this._nickRef.current.value = v;
+        this.setState({ nickDraft: v });
+      },
+      confirmNick: () => {
+        const v = (this._nickRef && this._nickRef.current ? this._nickRef.current.value : '').trim();
+        this.setState(s => ({ appNick: v || s.appNick || '정의로운 시민', nickModalOpen: false }));
+      },
+      wishOpen: !!st.wishOpen,
+      wishCaret: st.wishOpen ? 'ph ph-caret-down' : 'ph ph-caret-right',
+      toggleWish: () => this.setState(s => ({ wishOpen: !s.wishOpen })),
+      wishItems: [
+        { title: '[아이패드/중고] 상태 좋아요', price: '119만원' },
+        { title: '에어팟 미개봉 새상품', price: '15만 9천원' }
+      ].map(w => ({ ...w, open: () => this.openItemByTitle(w.title) })),
+      withdrawOpen: !!st.withdrawOpen,
+      openWithdraw: () => this.setState({ withdrawOpen: true }),
+      closeWithdraw: () => this.setState({ withdrawOpen: false }),
+      toggleNotif: () => this.setState(s => ({ notifOn: !(s.notifOn ?? true) })),
+      notifBg: (st.notifOn ?? true) ? '#FF8A00' : '#d8d8dd',
+      notifKnobLeft: (st.notifOn ?? true) ? '23px' : '3px',
+      deungdaeItems: this.rawItems().map(([title, due, region, likes, dm, nick, slotN, price, badge]) => ({
+        title, due, region, likes: likes + (((st.liked || {})[title]) ? 1 : 0), dm, nick, price, badge: badge || null,
+        dueColor: due === '상시' ? '#96969d' : '#FF8A00',
+        badgeBg: badge === 'BEST' ? '#FF8A00' : '#e0a400',
+        borderColor: badge === 'BEST' ? '#FF8A00' : 'transparent',
+        cardBg: '#fff',
+        thumb: ((this.itemMeta()[title] || {}).photos || [])[0] || '',
+        open: () => this.openItemByTitle(title)
+      })),
+      ...this.detailVals(st),
+      deungdaeDms: (this._dmList = [...(st.customDms || []),
+        { nick: '냉소적인 까치', item: '서초] 텀블러 직거래 희망', last: '제가 오늘 바빠서 오늘 밤 12시에 제가 연락드릴게요!', time: '10분 전', icon: 'ph ph-bird',
+          msgs: [['me', '안녕하세요, 텀블러 아직 판매 중인가요?'], ['them', '네, 새 상품 그대로 있습니다.'], ['me', '선물 받으신 거라고 적혀있던데 박스도 있나요?'], ['them', '네, 박스랑 구성품 전부 그대로 있습니다.'], ['me', '보온은 몇 시간 정도 가나요?'], ['them', '스텐 이중 진공이라 6시간 이상 갑니다.'], ['me', '색상이 사진이랑 실물이 많이 다를까요?'], ['them', '사진 그대로입니다. 형광등 아래서 찍었습니다.'], ['me', '알겠습니다. 서초 쪽에서 직거래 가능하실까요?'], ['them', '교대역 부근이면 가능합니다.'], ['me', '좋습니다. 시간은 언제가 괜찮으세요?'], ['them', '제가 오늘 바빠서 오늘 밤 12시에 제가 연락드릴게요!']] },
+        { nick: '활발한 사자', item: '헬스장 3회 양도', last: '3회 그대로 가져가시면 5천원 빼드릴게요', time: '1시간 전', icon: 'ph ph-cat',
+          msgs: [['me', '안녕하세요! 헬스장 이용권 보고 연락드렸습니다'], ['them', '안녕하세요~'], ['me', '어느 지점인가요? 서초역 근처인가요?'], ['them', '네, 서초역 3번 출구에서 도보 5분입니다.'], ['me', '유효기간은 언제까지인가요?'], ['them', '올해 말까지라 여유 있습니다.'], ['me', '양도 절차가 복잡하진 않나요?'], ['them', '프런트에서 이름 변경만 하면 끝입니다. 5분도 안 걸려요.'], ['me', '네고 가능할까요? 2회분 가격이면 바로 가겠습니다.'], ['them', '음… 3회 그대로 가져가시면 5천원 빼드릴게요'], ['me', '고민해보고 다시 연락드리겠습니다!'], ['them', '네~ 편하게 연락 주세요!']] },
+        { nick: '조용한 돌고래', item: '에어팟 미개봉 새상품', last: '물건은 안전한 곳에 보관 중입니다.', time: '3시간 전', icon: 'ph ph-fish',
+          msgs: [['me', '안녕하세요, 미개봉 새상품 맞나요?'], ['them', '네, 포장 비닐 그대로입니다.'], ['me', '구매 시기가 언제인가요?'], ['them', '지난달에 선물로 받았습니다.'], ['me', '정품 등록 여부 확인 가능할까요?'], ['them', '등록 안 되어 있고 영수증도 지참 가능합니다.'], ['me', '가격이 시세보다 조금 높은 것 같은데 네고 가능한가요?'], ['them', '미개봉이라 크게는 어렵고 5천원까지는 가능합니다.'], ['me', '알겠습니다. 직거래 희망하는데 감일동 쪽 어디서 보면 될까요?'], ['them', '감일동 행정복지센터 앞이 편합니다.'], ['me', '네, 이번 주 토요일 오후 어떠세요?'], ['them', '좋습니다. 물건은 안전한 곳에 보관 중입니다.']] },
+        { nick: '느긋한 수달', item: '[아이패드/중고] 상태 좋아요', last: '혜화역 2번 출구 앞 어떠세요?', time: '어제', icon: 'ph ph-paw-print',
+          msgs: [['me', '안녕하세요'], ['them', '안녕하세요!'], ['me', '사용을 거의 안 하셨다고 적혀있는데 그럼 배터리는 어떤 상태인가요?'], ['me', '그리고 혹시 언제 구입하셨나요?'], ['them', '배터리 성능 100%에 풀사이클이라고 합니다! 다른 기능들도 100% 상태라고 해요'], ['them', '구입은 작년 봄에 했습니다'], ['me', '기스나 흠집은 정말 없나요? 사진으로는 잘 안 보여서요'], ['them', '네, 액정은 거의 거울 수준이고 뒷면도 커버 벗겨서 확인했는데 흠집 없습니다'], ['me', '박스랑 충전기도 포함인가요?'], ['them', '박스, 사용설명서 그대로 드리고 충전기는 미사용입니다'], ['me', '펜슬은 따로 없나요?'], ['them', '펜슬은 사용 안 해서 없습니다'], ['me', '확인 감사합니다. 직거래는 어디가 편하세요?'], ['them', '혜화역 2번 출구 앞 어떠세요?'], ['me', '좋습니다. 토요일 2시에 뵙겠습니다!']] },
+        { nick: '신중한 부엉이', item: '캠핑 랜턴 2회 사용', last: '사진 추가로 보내드렸습니다. 확인 부탁드립니다.', time: '2일 전', icon: 'ph ph-moon',
+          msgs: [['me', '안녕하세요, 랜턴 상태 사진 좀 더 볼 수 있을까요?'], ['them', '사진 추가로 보내드렸습니다. 확인 부탁드립니다.'], ['me', '확인했습니다. 밝기 조절은 잘 되나요?'], ['them', '네, 다이얼 조절 모두 정상입니다.'], ['me', '배터리는 충전식인가요, 건전지인가요?'], ['them', 'USB-C 충전식이고 완충 시 20시간 갑니다.'], ['me', '방수도 되나요? 우중 캠핑이 잦아서요'], ['them', 'IPX4라 빗방울 정도는 문제 없습니다.'], ['me', '박스랑 충전 케이블 포함이죠?'], ['them', '네, 구성품 전부 포함입니다.'], ['me', '좋네요. 주말에 만석동에서 뵐 수 있을까요?'], ['them', '토요일 오전이면 가능합니다.']] }
+      ]).map(d => ({ ...d, open: () => this.setState({ appView: 'chat', chatDm: d }) })),
+      chatNick: st.chatDm ? st.chatDm.nick : '',
+      chatItem: st.chatDm ? st.chatDm.item : '',
+      chatIcon: st.chatDm ? st.chatDm.icon : 'ph ph-user',
+      chatGoItem: () => { if (st.chatDm) this.openItemByTitle(st.chatDm.item); },
+      chatInputRef: (this._chatRef = this._chatRef || React.createRef()),
+      chatOnInput: (e) => this.setState({ chatDraft: e.target.value }),
+      chatOnFile: (e) => { const f = e.target.files && e.target.files[0]; if (f) this.setState({ chatFile: f.name }); e.target.value = ''; },
+      chatFileName: st.chatFile || null,
+      chatFileClear: () => this.setState({ chatFile: null }),
+      chatSendBg: ((st.chatDraft || '').trim() || st.chatFile) ? '#FF8A00' : '#d8d8dd',
+      chatSendCursor: ((st.chatDraft || '').trim() || st.chatFile) ? 'pointer' : 'default',
+      chatSend: () => {
+        const txt = (this.state.chatDraft || '').trim(), f = this.state.chatFile, dm = this.state.chatDm;
+        if ((!txt && !f) || !dm) return;
+        const mine = [];
+        if (f) mine.push(['me', '📎 ' + f]);
+        if (txt) mine.push(['me', txt]);
+        const push = (msgs) => this.setState(s => {
+          const ex = { ...(s.chatExtra || {}) };
+          ex[dm.item] = [...(ex[dm.item] || []), ...msgs];
+          return { chatExtra: ex };
+        });
+        push(mine);
+        this.setState({ chatDraft: '', chatFile: null });
+        if (this._chatRef && this._chatRef.current) this._chatRef.current.value = '';
+        setTimeout(() => push([['them', '감사합니다! 보내주신 내용 확인하고 곧 연락드릴게요☺️']]), 700);
+      },
+      chatMsgs: st.chatDm ? [...st.chatDm.msgs, ...((st.chatExtra || {})[st.chatDm.item] || [])].map(([who, text]) => ({
+        text,
+        justify: who === 'me' ? 'flex-end' : 'flex-start',
+        bg: who === 'me' ? '#FF8A00' : '#ffffff',
+        color: who === 'me' ? '#ffffff' : '#2f2f34'
+      })) : []
+    };
+  }
+}
+</script>
+</body>
+</html>
